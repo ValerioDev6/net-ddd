@@ -1,0 +1,39 @@
+services:
+  arquitectura_db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-cleanarquitectura}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - arquitectura_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  arquitectura_api:
+    build:
+      context: .
+      dockerfile: src/CleanArquitectura.Api/Dockerfile
+    environment:
+      ASPNETCORE_URLS: http://+:5021
+      ConnectionStrings__DefaultConnection: Host=arquitectura_db;Port=5432;Database=${POSTGRES_DB:-cleanarquitectura};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-postgres}
+    depends_on:
+      arquitectura_db:
+        condition: service_healthy
+    expose:
+      - "5021"
+
+  serilogseq:
+    image: datalust/seq:2023.4
+    container_name: serilogseq
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - 5341:5341
+      - 8081:80<
+
+volumes:
+  arquitectura_db_data:

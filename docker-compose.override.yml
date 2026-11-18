@@ -1,0 +1,6 @@
+services:
+  arquitectura_api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - "5021:5021"

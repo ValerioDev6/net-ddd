@@ -1,0 +1,9 @@
+<Project ToolsVersion="0.1" DefaultTargets="Build" xmlns="...">
+  <ItemGroup>
+    <None Include="docker-compose.override.yml">
+      <DependentUpon>docker-compose.yml</DependentUpon>
+    </None>
+    <None Include="docker-compose.yml" />
+  </ItemGroup>
+</Project>
+ya
